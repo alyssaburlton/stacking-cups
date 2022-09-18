@@ -11,7 +11,7 @@ fun Pair<Cup, Cup>.isNested(): Boolean {
     }
 }
 
-fun List<Cup>.hasNesting() = windowed(2).map { Pair(it.first(), it.last()) }.any { it.isNested() }
+fun List<Cup>.hasNesting() = windowed(2).any { Pair(it.first(), it.last()).isNested() }
 
 fun String.toStack() = split(" ").map(::Cup)
 
