@@ -12,3 +12,26 @@ fun Pair<Cup, Cup>.isNested(): Boolean {
 }
 
 fun List<Cup>.hasNesting() = windowed(2).map { Pair(it.first(), it.last()) }.any { it.isNested() }
+
+fun String.toStack() = split(" ").map(::Cup)
+
+fun List<Cup>.toStackString() = joinToString(" ") { "$it" }
+
+fun List<Cup>.invert() = reversed().map { it.flip() }
+
+fun generateStacks(cups: Int): List<List<Cup>> {
+    if (cups == 1) {
+        return listOf(listOf(Cup(1, Orientation.UP)), listOf(Cup(1, Orientation.DOWN)))
+    }
+
+    val previousStacks = generateStacks(cups - 1)
+    val upStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.UP))
+    val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
+    return upStacks + downStacks
+}
+private fun generateStacksByAddingCup(previousStacks: List<List<Cup>>, cup: Cup) =
+    previousStacks.flatMap { stack ->
+        (0..stack.size).map { index ->
+            stack.subList(0, index) + cup + stack.subList(index, stack.size)
+        }
+    }

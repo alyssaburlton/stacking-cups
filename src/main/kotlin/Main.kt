@@ -1,6 +1,6 @@
 fun main(args: Array<String>) {
-    println("Hi!")
+    val allThreeStacks = generateStacks(3)
+    val allThreeTowers = allThreeStacks.filter { !it.hasNesting() }
 
-    val list = listOf(Cup(1, Orientation.UP), Cup(2, Orientation.DOWN))
-    list.hasNesting()
+    print(allThreeTowers.size) // 20
 }
