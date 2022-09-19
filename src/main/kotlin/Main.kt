@@ -1,6 +1,9 @@
 fun main(args: Array<String>) {
-    val allThreeStacks = generateStacks(3)
-    val allThreeTowers = allThreeStacks.filter { !it.hasNesting() }
+    (1..8).forEach { cups ->
+        val allStacks = generateStacks(cups)
+        val towers = allStacks.filter { !it.hasNesting() }
+        val idealTowers = allStacks.filter { it.isIdealTower() }
 
-    print(allThreeTowers.size) // 20
+        println("$cups: ${allStacks.size} stacks, ${towers.size} towers, ${idealTowers.size} ideal towers")
+    }
 }

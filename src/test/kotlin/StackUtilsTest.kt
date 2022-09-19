@@ -57,4 +57,26 @@ class StackUtilsTest {
             "n1 n2"
         )
     }
+
+    @Test
+    fun `Should correctly identify whether pairs of cups are locked`() {
+        "u2 u1".shouldNotBeLocked()
+        "n1 n2".shouldNotBeLocked()
+        "n3 u1".shouldNotBeLocked()
+
+        "n3 u4".shouldBeLocked()
+        "n4 u3".shouldBeLocked()
+
+        "n4 n3".shouldBeLocked()
+        "u4 n3".shouldBeLocked()
+        "u3 n4".shouldBeLocked()
+    }
+    private fun String.shouldBeLocked() {
+        val stack = toStack()
+        Pair(stack.first(), stack.last()).isLocked() shouldBe true
+    }
+    private fun String.shouldNotBeLocked() {
+        val stack = toStack()
+        Pair(stack.first(), stack.last()).isLocked() shouldBe false
+    }
 }
