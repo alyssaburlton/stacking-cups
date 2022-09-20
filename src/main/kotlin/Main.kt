@@ -8,11 +8,11 @@ fun main(args: Array<String>) {
     }
 
     println("")
-    println("Just ideal towers")
+    println("Just ideal towers, dividing by two (ignoring inverting)")
     println("")
-    (1..20).forEach { cups ->
+    val sequence = (1..20).joinToString(", ") { cups ->
         val idealTowers = generateIdealTowers(cups)
-
-        println("$cups: ${idealTowers.size}")
+        "${idealTowers.size / 2}"
     }
+    println(sequence)
 }
