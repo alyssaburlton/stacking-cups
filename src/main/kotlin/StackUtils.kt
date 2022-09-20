@@ -41,3 +41,19 @@ private fun generateStacksByAddingCup(previousStacks: List<List<Cup>>, cup: Cup)
             stack.subList(0, index) + cup + stack.subList(index, stack.size)
         }
     }
+
+/**
+ * More optimised version that just generates ideal towers, using the assumption that you can only build them from
+ * ideal towers from the previous dimension
+ */
+fun generateIdealTowers(cups: Int): List<List<Cup>> {
+    if (cups == 1) {
+        // All 1-cup stacks are ideal towers
+        return generateStacks(1)
+    }
+
+    val previousStacks = generateIdealTowers(cups - 1)
+    val upStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.UP))
+    val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
+    return (upStacks + downStacks).filter { it.isIdealTower() }
+}
