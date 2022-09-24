@@ -57,3 +57,64 @@ fun generateIdealTowers(cups: Int): List<List<Cup>> {
     val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
     return (upStacks + downStacks).filter { it.isIdealTower() }
 }
+
+/**
+ * Generating towers using the assumption that you can only build them from stacks
+ * in the previous dimension where there are no nested pairs which don't involve the largest cup.
+ *
+ * You can't just include towers, because here is an example of a stack with nesting becoming a tower in the next iteration:
+ *
+ * u1 n2 n4 u3 -> u1 n2 u5 n4 u3
+ *
+ * Turns out even this optimisation does not work. For example, this gets thrown away:
+ *
+ * u1 n2 n3 u4
+ *
+ * But after two iterations, it can become this:
+ *
+ * u1 n2 u5 n6 n3 u4
+ */
+// fun generateTowersBad(cups: Int): List<List<Cup>> {
+//    return generatePotentialTowersBad(cups).filter { !it.hasNesting() }
+// }
+// private fun generatePotentialTowersBad(cups: Int): List<List<Cup>> {
+//    if (cups == 1) {
+//        // All 1-cup stacks are towers
+//        return generateStacks(1)
+//    }
+//
+//    val previousStacks = generatePotentialTowersBad(cups - 1)
+//    val upStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.UP))
+//    val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
+//    return (upStacks + downStacks).filter { it.canPotentiallyProduceTower(cups) }
+// }
+// private fun List<Cup>.canPotentiallyProduceTower(cups: Int) = windowed(2).none {
+//    Pair(it.first(), it.last()).isNested() && it.first().size != cups &&
+//            it.last().size != cups
+// }
+
+/**
+ * Assembles towers from the base up, ignoring/discarding any instances of nesting as we go
+ */
+fun countTowers(cups: Int): Int {
+    val cupSizes = (1..cups).toList()
+    return cupSizes.sumOf { cupSize ->
+        val remainingCupSizes = cupSizes.filter { it != cupSize }
+        addAllPossibleCups(listOf(listOf(Cup(cupSize, Orientation.UP)), listOf(Cup(cupSize, Orientation.DOWN))), remainingCupSizes).size
+    }
+}
+private fun addAllPossibleCups(towersSoFar: List<List<Cup>>, remainingCupSizes: List<Int>): List<List<Cup>> {
+    if (towersSoFar.isEmpty() || remainingCupSizes.isEmpty()) {
+        return towersSoFar
+    }
+
+    return remainingCupSizes.flatMap { cupSize ->
+        val upStacks = towersSoFar.map { it + Cup(cupSize, Orientation.UP) }
+        val downStacks = towersSoFar.map { it + Cup(cupSize, Orientation.DOWN) }
+        val stackSize = upStacks.first().size
+        val nextTowers = (upStacks + downStacks).filter { !Pair(it[stackSize - 2], it[stackSize - 1]).isNested() }
+        val nextCupSizes = remainingCupSizes.filter { it != cupSize }
+
+        addAllPossibleCups(nextTowers, nextCupSizes)
+    }
+}

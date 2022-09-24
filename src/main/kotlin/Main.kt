@@ -15,4 +15,12 @@ fun main(args: Array<String>) {
         "${idealTowers.size / 2}"
     }
     println(sequence)
+
+    println("")
+    println("Just towers, using optimised algorithm")
+    println("")
+    (1..20).forEach { cups ->
+        val towers = countTowers(cups)
+        println("$cups: $towers towers")
+    }
 }

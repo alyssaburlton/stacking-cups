@@ -34,7 +34,12 @@ _____________
  - The act of inverting a tower preserves locking IF there is no nesting. With nesting this is not true, e.g. "u2 n1 n3" is locked, but its inverse "u3 u1 n2" is not (the smallest cup "falls" down into the largest one)
  - The inverse of an ideal tower is an ideal tower. And subset of an ideal tower is an ideal tower.
 
+ - Define "locking" formally, w/concept of "junctions"? Have the code able to identify junctions and locked vs unlocked in general
+ - For ideal towers, "pairwise locked" and "locked" are equivalent.
+ - An ideal tower always begins or ends with the largest cup
+
 ### Stretch Questions / Out of Scope
 
  - What if we allow repeated cups, e.g. buying two of the same set? What properties do we encounter then?
  - When N gets large, we will eventually have a cup that is taller than the two smallest cups stacked on top of each other. How does this change things, what new properties/concerns are introduced?
+ - u5 u2 n1 n6

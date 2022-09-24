@@ -79,4 +79,24 @@ class StackUtilsTest {
         val stack = toStack()
         Pair(stack.first(), stack.last()).isLocked() shouldBe false
     }
+
+    @Test
+    fun `Ideal tower generation should produce the same values as exhaustive stack searching`() {
+        (1..7).forEach { stackSize ->
+            val exhaustiveIdealTowers = generateStacks(stackSize).filter { it.isIdealTower() }
+            val generatedIdealTowers = generateIdealTowers(stackSize)
+
+            generatedIdealTowers.shouldContainExactlyInAnyOrder(exhaustiveIdealTowers)
+        }
+    }
+
+    @Test
+    fun `Tower counting should produce the correct numbers when compared to exhaustive stack searching`() {
+        (1..7).forEach { stackSize ->
+            val exhaustiveTowerCount = generateStacks(stackSize).filter { !it.hasNesting() }.size
+            val towerCount = countTowers(stackSize)
+
+            towerCount shouldBe exhaustiveTowerCount
+        }
+    }
 }
