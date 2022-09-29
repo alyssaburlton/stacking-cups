@@ -19,6 +19,14 @@ fun List<Cup>.isIdealTower() = windowed(2).all { Pair(it.first(), it.last()).isL
 
 fun List<Cup>.hasNesting() = windowed(2).any { Pair(it.first(), it.last()).isNested() }
 
+// This isn't really accurate, because e.g. u3 n1 n2 would count as two nested pairs. But in reality, n2 is locked on top of u3 and doesn't really nest over n1.
+private fun List<Cup>.countNestedPairs() = windowed(2).count { Pair(it.first(), it.last()).isNested() }
+
+fun List<Cup>.isPotentialTowerWithOneMoreCup(cups: Int) = countNestedPairs() == 1 && windowed(2).all {
+    val pair = Pair(it.first(), it.last())
+    return !pair.isNested() || pair.first.size == cups || pair.second.size == cups
+}
+
 fun String.toStack() = split(" ").map(::Cup)
 
 fun List<Cup>.toStackString() = joinToString(" ") { "$it" }
@@ -96,6 +104,13 @@ fun generateIdealTowers(cups: Int): List<List<Cup>> {
 /**
  * Assembles towers from the base up, ignoring/discarding any instances of nesting as we go
  */
+fun generateTowers(cups: Int): List<List<Cup>> {
+    val cupSizes = (1..cups).toList()
+    return cupSizes.flatMap { cupSize ->
+        val remainingCupSizes = cupSizes.filter { it != cupSize }
+        addAllPossibleCups(listOf(listOf(Cup(cupSize, Orientation.UP)), listOf(Cup(cupSize, Orientation.DOWN))), remainingCupSizes)
+    }
+}
 fun countTowers(cups: Int): Int {
     val cupSizes = (1..cups).toList()
     return cupSizes.sumOf { cupSize ->
