@@ -1,5 +1,5 @@
 fun main(args: Array<String>) {
-    (1..8).forEach { cups ->
+    (1..7).forEach { cups ->
         val allStacks = generateStacks(cups)
         val towers = allStacks.filter { !it.hasNesting() }
         val idealTowers = allStacks.filter { it.isIdealTower() }
@@ -27,13 +27,18 @@ fun main(args: Array<String>) {
 //        println("$cups: $towers towers")
 //    }
 
-    println("")
-    (1..6).forEach { cups ->
-        val towers = generateTowers(cups)
-        val firstCupCounts = towers.groupBy { it.first() }.mapValues { it.value.size }
-        val total = firstCupCounts.values.sum()
-        val totalStartingWithLargest = firstCupCounts.getValue(Cup(cups, Orientation.UP)) + firstCupCounts.getValue(Cup(cups, Orientation.DOWN))
+//    println("")
+//    (1..6).forEach { cups ->
+//        val towers = generateTowers(cups)
+//        val firstCupCounts = towers.groupBy { it.first() }.mapValues { it.value.size }
+//        val total = firstCupCounts.values.sum()
+//        val totalStartingWithLargest = firstCupCounts.getValue(Cup(cups, Orientation.UP)) + firstCupCounts.getValue(Cup(cups, Orientation.DOWN))
+//
+//        println("$cups: $totalStartingWithLargest/$total = ${totalStartingWithLargest / total.toDouble()} $firstCupCounts")
+//    }
 
-        println("$cups: $totalStartingWithLargest/$total = ${totalStartingWithLargest / total.toDouble()} $firstCupCounts")
+    println("")
+    (2..10).forEach { cups ->
+        towersIterativeStep(cups)
     }
 }

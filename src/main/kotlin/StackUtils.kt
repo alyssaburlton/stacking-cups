@@ -1,4 +1,6 @@
+import org.apache.commons.math3.util.CombinatoricsUtils
 import kotlin.math.abs
+import kotlin.math.pow
 
 fun Pair<Cup, Cup>.isNested() =
     when (first.orientation) {
@@ -64,6 +66,46 @@ fun generateIdealTowers(cups: Int): List<List<Cup>> {
     val upStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.UP))
     val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
     return (upStacks + downStacks).filter { it.isIdealTower() }
+}
+
+/**
+ * Generates the "pure tower" chain, which is 3^n - 3^(n-1), or recurrence relation Tn = 3T(n-1)
+ * These are towers which remain towers if you remove the largest cup one at a time
+ */
+fun generatePureTowers(cups: Int): List<List<Cup>> {
+    if (cups == 1) {
+        // All 1-cup stacks are ideal towers
+        return generateStacks(1)
+    }
+
+    val previousStacks = generatePureTowers(cups - 1)
+    val upStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.UP))
+    val downStacks = generateStacksByAddingCup(previousStacks, Cup(cups, Orientation.DOWN))
+    return (upStacks + downStacks).filter { !it.hasNesting() }
+}
+
+/**
+ * Break down the iterative step into how many come from towers in the previous space, vs how many come from stacks with
+ * nesting in them
+ */
+fun towersIterativeStep(cups: Int) {
+    val towersInPreviousSpace = generateTowers(cups - 1)
+    val towersInNextSpace = generateTowers(cups)
+
+    val upStacks = generateStacksByAddingCup(towersInPreviousSpace, Cup(cups, Orientation.UP))
+    val downStacks = generateStacksByAddingCup(towersInPreviousSpace, Cup(cups, Orientation.DOWN))
+    val towersMadeFromTowers = (upStacks + downStacks).filter { !it.hasNesting() }
+
+    val towersMadeFromStacks = towersInNextSpace - towersMadeFromTowers.toSet()
+    val difference = towersMadeFromStacks.size
+    val nonTowersInPreviousSpace = 2.0.pow(cups - 1) * CombinatoricsUtils.factorial(cups - 1) - towersInPreviousSpace.size
+
+    println("N=$cups: ${towersInPreviousSpace.size} -> ${towersMadeFromTowers.size} (+ $difference from other stacks)")
+    println("The difference, $difference, is generated from $nonTowersInPreviousSpace possible non-towers in the previous space")
+
+    val nestedStacksUsed = towersMadeFromStacks.map { it.filter { cup -> cup.size != cups } }
+    val distinctNestedStacksUsed = nestedStacksUsed.distinct().size
+    println("$difference was generated from $distinctNestedStacksUsed distinct stacks (of $nonTowersInPreviousSpace)")
 }
 
 /**
